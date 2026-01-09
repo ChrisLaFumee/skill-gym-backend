@@ -2,6 +2,7 @@ const express = require("express");
 
 const healthRouter = require("./routes/health");
 const timeRouter = require("./routes/time");
+const challengesRouter = require("./routes/challenges");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -16,8 +17,15 @@ app.use((req, res, next) => {
 // Middleware: parse incoming JSON bodies
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
 app.use("/health", healthRouter);
 app.use("/time", timeRouter);
+app.use("/challenges", challengesRouter);
 
 // Catch-all: unknown routes
 app.use((req, res) => {
