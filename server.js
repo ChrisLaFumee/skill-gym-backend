@@ -19,7 +19,13 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
   next();
 });
 
@@ -28,9 +34,6 @@ app.use("/time", timeRouter);
 app.use("/challenges", challengesRouter);
 
 // Catch-all: unknown routes
-app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
-});
 app.use((req, res, next) => {
   const err = new Error("Route not found");
   err.statusCode = 404;

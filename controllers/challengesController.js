@@ -1,13 +1,38 @@
 const { randomUUID } = require("crypto");
 
-// In-memory data store (resets when server restarts)
-const challenges = [];
+const {
+  getAllChallenges,
+  getChallengeById,
+  insertChallenge,
+} = require("../db/challengesModel");
 
-const getChallenges = (req, res) => {
-  res.status(200).json(challenges);
+const getChallenges = async (req, res, next) => {
+  try {
+    const rows = await getAllChallenges();
+    res.status(200).json(rows);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const createChallenge = (req, res, next) => {
+const getChallenge = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const row = await getChallengeById(id);
+
+    if (!row) {
+      const err = new Error("Challenge not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    res.status(200).json(row);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const createChallenge = async (req, res, next) => {
   const { title, difficulty } = req.body;
 
   if (!title || typeof title !== "string" || title.trim().length === 0) {
@@ -32,12 +57,16 @@ const createChallenge = (req, res, next) => {
     createdAt: new Date().toISOString(),
   };
 
-  challenges.push(newChallenge);
-
-  res.status(201).json(newChallenge);
+  try {
+    const saved = await insertChallenge(newChallenge);
+    res.status(201).json(saved);
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
   getChallenges,
+  getChallenge,
   createChallenge,
 };
