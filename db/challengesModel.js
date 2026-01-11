@@ -46,9 +46,43 @@ const deleteChallengeById = (id) => {
   });
 };
 
+const updateChallenge = (id, updates) => {
+  const { title, difficulty } = updates;
+  const allowedFields = [];
+  const values = [];
+
+  if (title !== undefined) {
+    allowedFields.push("title = ?");
+    values.push(title);
+  }
+
+  if (difficulty !== undefined) {
+    allowedFields.push("difficulty = ?");
+    values.push(difficulty);
+  }
+
+  if (allowedFields.length === 0) {
+    return Promise.resolve(0);
+  }
+
+  values.push(id);
+
+  return new Promise((resolve, reject) => {
+    db.run(
+      `UPDATE challenges SET ${allowedFields.join(", ")} WHERE id = ?`,
+      values,
+      function (err) {
+        if (err) return reject(err);
+        resolve(this.changes); // number of rows updated
+      }
+    );
+  });
+};
+
 module.exports = {
   getAllChallenges,
   getChallengeById,
   insertChallenge,
   deleteChallengeById,
+  updateChallenge,
 };
