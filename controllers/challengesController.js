@@ -4,6 +4,7 @@ const {
   getAllChallenges,
   getChallengeById,
   insertChallenge,
+  deleteChallengeById,
 } = require("../db/challengesModel");
 
 const getChallenges = async (req, res, next) => {
@@ -65,8 +66,26 @@ const createChallenge = async (req, res, next) => {
   }
 };
 
+const deleteChallenge = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleted = await deleteChallengeById(id);
+
+    if (deleted === 0) {
+      const err = new Error("Challenge not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getChallenges,
   getChallenge,
   createChallenge,
+  deleteChallenge,
 };

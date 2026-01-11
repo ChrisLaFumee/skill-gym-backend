@@ -37,8 +37,18 @@ const insertChallenge = (challenge) => {
   });
 };
 
+const deleteChallengeById = (id) => {
+  return new Promise((resolve, reject) => {
+    db.run("DELETE FROM challenges WHERE id = ?", [id], function (err) {
+      if (err) return reject(err);
+      resolve(this.changes); // number of rows deleted
+    });
+  });
+};
+
 module.exports = {
   getAllChallenges,
   getChallengeById,
   insertChallenge,
+  deleteChallengeById,
 };
