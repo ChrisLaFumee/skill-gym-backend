@@ -1,11 +1,11 @@
 {
-  "folders": [
-	{
-		"path": "../skills-gym-ui"
-	},
-	{
-		"path": "."
-	}
-],
-  "settings": {}
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../skills-gym-ui"
+		}
+	],
+	"settings": {}
 }
